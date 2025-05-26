@@ -188,6 +188,7 @@
             line-height: 1.6;
             box-shadow: 0 10px 25px rgba(220, 38, 38, 0.3);
             animation: slideIn 0.5s ease-out;
+            transition: all 0.3s ease;
         }
         
         @keyframes slideIn {
@@ -286,39 +287,135 @@
 
     <script>
         let userName = '';
+        let usedRoasts = new Set();
         
-        const roastMessages = [
-            "You're the human equivalent of a participation trophy.",
-            "If you were any more basic, you'd be a pH of 14.",
-            "You're like a software update - nobody wants you but you keep showing up anyway.",
-            "Your birth certificate is an apology letter from the condom factory.",
-            "You're the reason they put instructions on shampoo bottles.",
-            "If stupidity was a sport, you'd be a world champion.",
-            "You're not completely useless - you can always serve as a bad example.",
-            "Your face could be used as a before picture for anything.",
-            "You're like a cloud - when you disappear, it's a beautiful day.",
-            "If you were any slower, you'd be going backwards.",
-            "You have the personality of a wet paper bag.",
-            "You're the human version of a printer error.",
-            "If brains were gasoline, you couldn't power a flea's motorcycle.",
-            "You're about as useful as a screen door on a submarine.",
-            "Your life is like a broken pencil - pointless.",
-            "You're the reason we have warning labels on everything.",
-            "If you were a spice, you'd be flour.",
-            "You have all the charm of a paper cut.",
-            "You're like a Monday morning - nobody's excited to see you.",
-            "Your existence is proof that evolution can go in reverse.",
-            "You're not the dumbest person in the world, but you better hope they don't die.",
-            "If ignorance is bliss, you must be the happiest person alive.",
-            "You're the human equivalent of nails on a chalkboard.",
-            "Your personality is like a dial-up internet connection - slow and outdated.",
-            "You're about as sharp as a bowling ball.",
-            "If you were a vegetable, you'd be a cabbage.",
-            "You have the emotional range of a teaspoon.",
-            "You're like a broken clock - right twice a day by accident.",
-            "Your face is the reason why makeup was invented.",
-            "You're living proof that not all accidents are tragedies."
+        // Roast templates for dynamic generation
+        const roastTemplates = [
+            "You're the human equivalent of {item}.",
+            "If you were any more {adjective}, you'd be {comparison}.",
+            "You're like {object} - {reason}.",
+            "Your {bodypart} could be used as {purpose}.",
+            "You have the {trait} of {object}.",
+            "If {concept} was a sport, you'd be {achievement}.",
+            "You're about as {quality} as {object}.",
+            "Your {attribute} is like {comparison} - {description}.",
+            "You're the reason {statement}.",
+            "If you were a {category}, you'd be {item}.",
+            "You have all the {quality} of {object}.",
+            "Your existence is proof that {statement}.",
+            "You're living evidence that {statement}.",
+            "If {condition}, {result}.",
+            "You're the {type} version of {object}."
         ];
+        
+        // Word banks for generating roasts
+        const wordBanks = {
+            item: ["a participation trophy", "a broken calculator", "a wet sock", "expired milk", "a paperclip", "a dead battery", "a parking ticket", "a wrong number", "a spam email", "a loading screen", "a pop-up ad", "a Monday morning", "a empty pen", "a flat tire", "a cold pizza", "a broken promise", "a fake plant", "a placeholder text", "a software bug", "a traffic jam"],
+            
+            adjective: ["basic", "slow", "confused", "outdated", "useless", "boring", "predictable", "generic", "forgettable", "disappointing", "awkward", "clueless", "dense", "shallow", "bland", "stale", "expired", "broken", "defective", "unreliable"],
+            
+            comparison: ["a pH of 14", "going backwards", "a fossil", "yesterday's news", "a dial-up connection", "a flip phone", "a cassette tape", "a floppy disk", "a typewriter", "a pager", "a VHS tape", "a telegraph", "smoke signals", "carrier pigeons", "stone tablets"],
+            
+            object: ["a software update", "a cloud", "a broken clock", "a wet paper bag", "a screen door on a submarine", "a chocolate teapot", "a solar-powered flashlight", "a waterproof towel", "an inflatable dart board", "a concrete parachute", "a glass hammer", "a rubber nail", "an invisible car", "a silent alarm", "a square wheel"],
+            
+            reason: ["nobody wants you but you keep showing up", "when you disappear, it's a beautiful day", "everyone sees right through you", "you're full of hot air", "you make everything worse", "you serve no purpose", "you break when needed most", "you're always in the way", "you complicate simple things", "you're the wrong tool for every job"],
+            
+            bodypart: ["face", "personality", "brain", "existence", "life choices", "decision-making skills", "social skills", "common sense", "intelligence", "awareness"],
+            
+            purpose: ["a before picture for anything", "a warning sign", "evidence of what not to do", "a cautionary tale", "a bad example", "a reason to give up", "proof that anyone can fail", "motivation for others to try harder"],
+            
+            trait: ["personality", "charm", "intelligence", "wit", "grace", "style", "sophistication", "emotional range", "depth", "complexity", "charisma", "appeal"],
+            
+            concept: ["stupidity", "being wrong", "missing the point", "confusion", "being useless", "disappointing people", "making mistakes", "being forgettable", "wasting time", "failing upward"],
+            
+            achievement: ["a world champion", "an Olympic gold medalist", "setting records", "breaking barriers", "making history", "going professional", "getting sponsored", "coaching others", "writing the playbook"],
+            
+            quality: ["useful", "sharp", "bright", "smooth", "reliable", "effective", "impressive", "memorable", "valuable", "functional", "appealing", "significant"],
+            
+            attribute: ["personality", "brain", "life", "existence", "approach to life", "worldview", "mindset", "attitude", "perspective", "philosophy"],
+            
+            description: ["slow and outdated", "broken and useless", "stuck in the past", "never quite right", "always disappointing", "full of problems", "unreliable when needed", "expired and stale"],
+            
+            statement: ["they put instructions on shampoo bottles", "we have warning labels on everything", "evolution can go in reverse", "not all accidents are tragedies", "some people shouldn't reproduce", "natural selection isn't working", "the gene pool needs chlorine", "they invented the mute button"],
+            
+            category: ["spice", "vegetable", "tool", "appliance", "weather phenomenon", "mathematical concept", "computer program", "household item", "transportation method", "social media platform"],
+            
+            type: ["human", "living", "walking", "breathing", "mobile", "conscious", "sentient", "functional", "operational"],
+            
+            condition: ["brains were gasoline, you couldn't power a flea's motorcycle", "ignorance is bliss, you must be the happiest person alive", "stupidity burned calories, you'd be a supermodel", "being wrong was an art form, you'd be Picasso", "disappointment was currency, you'd be a billionaire"],
+            
+            result: ["you'd still find a way to mess it up", "you'd be the exception that proves the rule", "you'd somehow make it worse", "you'd be the cautionary tale", "you'd be the reason for new regulations"]
+        };
+        
+        // Static roasts for variety
+        const staticRoasts = [
+            "You're the human equivalent of a participation trophy.",
+            "Your birth certificate is an apology letter from the condom factory.",
+            "You're not completely useless - you can always serve as a bad example.",
+            "You're not the dumbest person in the world, but you better hope they don't die.",
+            "Your face is the reason why makeup was invented.",
+            "You're the reason people invented the block button.",
+            "If you were any more disappointing, you'd be a cancelled TV show.",
+            "You're like a penny - two-faced and not worth much.",
+            "You're the human version of autocorrect - constantly making things worse.",
+            "If common sense was common, you'd still not have any.",
+            "You're like a dictionary - you add meaning to people's lives by helping them avoid being like you.",
+            "You're the reason GPS says 'recalculating' so often.",
+            "If you were a font, you'd be Comic Sans.",
+            "You're like a broken pencil - completely pointless.",
+            "You're the human equivalent of stepping on a LEGO barefoot.",
+            "If stupidity was painful, you'd be screaming.",
+            "You're like a software update - nobody wants you but you force yourself on them anyway.",
+            "You're the reason they put 'Do not eat' on silica gel packets.",
+            "If you were a movie, you'd be a direct-to-DVD sequel nobody asked for.",
+            "You're like a math problem everyone skips."
+        ];
+        
+        function getRandomElement(array) {
+            return array[Math.floor(Math.random() * array.length)];
+        }
+        
+        function generateDynamicRoast() {
+            const template = getRandomElement(roastTemplates);
+            let roast = template;
+            
+            // Replace placeholders with random words
+            Object.keys(wordBanks).forEach(category => {
+                const placeholder = `{${category}}`;
+                if (roast.includes(placeholder)) {
+                    roast = roast.replace(placeholder, getRandomElement(wordBanks[category]));
+                }
+            });
+            
+            return roast;
+        }
+        
+        function generateUniqueRoast() {
+            let roast;
+            let attempts = 0;
+            const maxAttempts = 50;
+            
+            do {
+                // Mix of static and dynamic roasts
+                if (Math.random() < 0.3) {
+                    // 30% chance for static roasts
+                    roast = getRandomElement(staticRoasts);
+                } else {
+                    // 70% chance for generated roasts
+                    roast = generateDynamicRoast();
+                }
+                attempts++;
+            } while (usedRoasts.has(roast) && attempts < maxAttempts);
+            
+            // If we've used too many roasts, clear the history
+            if (attempts >= maxAttempts) {
+                usedRoasts.clear();
+                roast = generateDynamicRoast();
+            }
+            
+            usedRoasts.add(roast);
+            return roast;
+        }
         
         function startRoasting() {
             const nameInput = document.getElementById('nameInput');
@@ -341,7 +438,7 @@
         
         function generateRoast() {
             const messageContainer = document.getElementById('messageContainer');
-            const randomMessage = roastMessages[Math.floor(Math.random() * roastMessages.length)];
+            const randomMessage = generateUniqueRoast();
             
             // Add a small delay for animation
             messageContainer.style.opacity = '0';
@@ -358,10 +455,11 @@
             document.getElementById('roastPage').classList.add('hidden');
             document.getElementById('welcomePage').classList.remove('hidden');
             
-            // Clear the input
+            // Clear the input and reset used roasts
             document.getElementById('nameInput').value = '';
             document.getElementById('nameInput').style.borderColor = '#e2e8f0';
             document.getElementById('nameInput').placeholder = '';
+            usedRoasts.clear(); // Reset roast history when going back
         }
         
         // Allow Enter key to submit
