@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nasty Vibes Only</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Playfair Display', serif;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #2d1b69 0%, #11998e 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+        
+        /* Animated background elements */
+        .bg-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .skull {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .skull:nth-child(1) {
+            top: 20%;
+            left: 10%;
+            font-size: 40px;
+            animation-delay: 0s;
+        }
+        
+        .skull:nth-child(2) {
+            top: 60%;
+            right: 15%;
+            font-size: 35px;
+            animation-delay: 2s;
+        }
+        
+        .skull:nth-child(3) {
+            bottom: 30%;
+            left: 20%;
+            font-size: 30px;
+            animation-delay: 4s;
+        }
+        
+        .dark-moon {
+            position: absolute;
+            top: 10%;
+            right: 10%;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, #4a4a4a 0%, #2a2a2a 70%);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: darkGlow 4s ease-in-out infinite alternate;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        
+        @keyframes darkGlow {
+            0% { box-shadow: 0 0 20px #4a4a4a; }
+            100% { box-shadow: 0 0 40px #2a2a2a, 0 0 60px #4a4a4a; }
+        }
+        
+        .content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 
+                0 32px 64px rgba(0, 0, 0, 0.15),
+                0 16px 32px rgba(0, 0, 0, 0.1),
+                0 8px 16px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            max-width: 400px;
+            width: 100%;
+            position: relative;
+            z-index: 2;
+            border: 2px solid rgba(255, 255, 255, 0.6);
+        }
+        
+        .app-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+        
+        .app-subtitle {
+            font-size: 16px;
+            color: #718096;
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+        
+        .input-group {
+            margin-bottom: 30px;
+        }
+        
+        .input-label {
+            display: block;
+            font-size: 18px;
+            color: #4a5568;
+            margin-bottom: 15px;
+            font-weight: 400;
+        }
+        
+        .name-input {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 18px;
+            font-family: 'Playfair Display', serif;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .name-input:focus {
+            outline: none;
+            border-color: #2d1b69;
+            box-shadow: 0 0 0 3px rgba(45, 27, 105, 0.1);
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #2d1b69 0%, #11998e 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-family: 'Playfair Display', serif;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 10px 20px rgba(45, 27, 105, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(45, 27, 105, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .message-display {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            font-size: 20px;
+            font-weight: 400;
+            line-height: 1.6;
+            box-shadow: 0 10px 25px rgba(220, 38, 38, 0.3);
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 3;
+        }
+        
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: scale(1.1);
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 480px) {
+            .content {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+            
+            .app-title {
+                font-size: 28px;
+            }
+            
+            .message-display {
+                font-size: 18px;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-elements">
+        <div class="skull">💀</div>
+        <div class="skull">👹</div>
+        <div class="skull">🔥</div>
+        <div class="dark-moon"></div>
+    </div>
+    
+    <!-- Welcome Page -->
+    <div id="welcomePage" class="container">
+        <div class="content">
+            <h1 class="app-title">Nasty Vibes Only</h1>
+            <p class="app-subtitle">Your personal hater</p>
+            
+            <div class="input-group">
+                <label class="input-label">Enter your name</label>
+                <input type="text" id="nameInput" class="name-input" placeholder="">
+            </div>
+            
+            <button onclick="startRoasting()" class="btn">Let's Go 💀</button>
+        </div>
+    </div>
+    
+    <!-- Roast Page -->
+    <div id="roastPage" class="container hidden">
+        <button onclick="goBack()" class="back-btn">←</button>
+        
+        <div class="content">
+            <h1 class="app-title">Nasty Vibes Only</h1>
+            
+            <div id="messageContainer" class="message-display">
+                <!-- Messages will appear here -->
+            </div>
+            
+            <button onclick="generateRoast()" class="btn">Roast me more 🔥</button>
+        </div>
+    </div>
+
+    <script>
+        let userName = '';
+        
+        const roastMessages = [
+            "You're the human equivalent of a participation trophy.",
+            "If you were any more basic, you'd be a pH of 14.",
+            "You're like a software update - nobody wants you but you keep showing up anyway.",
+            "Your birth certificate is an apology letter from the condom factory.",
+            "You're the reason they put instructions on shampoo bottles.",
+            "If stupidity was a sport, you'd be a world champion.",
+            "You're not completely useless - you can always serve as a bad example.",
+            "Your face could be used as a before picture for anything.",
+            "You're like a cloud - when you disappear, it's a beautiful day.",
+            "If you were any slower, you'd be going backwards.",
+            "You have the personality of a wet paper bag.",
+            "You're the human version of a printer error.",
+            "If brains were gasoline, you couldn't power a flea's motorcycle.",
+            "You're about as useful as a screen door on a submarine.",
+            "Your life is like a broken pencil - pointless.",
+            "You're the reason we have warning labels on everything.",
+            "If you were a spice, you'd be flour.",
+            "You have all the charm of a paper cut.",
+            "You're like a Monday morning - nobody's excited to see you.",
+            "Your existence is proof that evolution can go in reverse.",
+            "You're not the dumbest person in the world, but you better hope they don't die.",
+            "If ignorance is bliss, you must be the happiest person alive.",
+            "You're the human equivalent of nails on a chalkboard.",
+            "Your personality is like a dial-up internet connection - slow and outdated.",
+            "You're about as sharp as a bowling ball.",
+            "If you were a vegetable, you'd be a cabbage.",
+            "You have the emotional range of a teaspoon.",
+            "You're like a broken clock - right twice a day by accident.",
+            "Your face is the reason why makeup was invented.",
+            "You're living proof that not all accidents are tragedies."
+        ];
+        
+        function startRoasting() {
+            const nameInput = document.getElementById('nameInput');
+            userName = nameInput.value.trim();
+            
+            if (!userName) {
+                nameInput.style.borderColor = '#dc2626';
+                nameInput.placeholder = 'Too scared to enter your name?';
+                return;
+            }
+            
+            // Capitalize first letter
+            userName = userName.charAt(0).toUpperCase() + userName.slice(1);
+            
+            document.getElementById('welcomePage').classList.add('hidden');
+            document.getElementById('roastPage').classList.remove('hidden');
+            
+            generateRoast();
+        }
+        
+        function generateRoast() {
+            const messageContainer = document.getElementById('messageContainer');
+            const randomMessage = roastMessages[Math.floor(Math.random() * roastMessages.length)];
+            
+            // Add a small delay for animation
+            messageContainer.style.opacity = '0';
+            messageContainer.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                messageContainer.innerHTML = `${userName}, ${randomMessage}`;
+                messageContainer.style.opacity = '1';
+                messageContainer.style.transform = 'translateY(0)';
+            }, 150);
+        }
+        
+        function goBack() {
+            document.getElementById('roastPage').classList.add('hidden');
+            document.getElementById('welcomePage').classList.remove('hidden');
+            
+            // Clear the input
+            document.getElementById('nameInput').value = '';
+            document.getElementById('nameInput').style.borderColor = '#e2e8f0';
+            document.getElementById('nameInput').placeholder = '';
+        }
+        
+        // Allow Enter key to submit
+        document.getElementById('nameInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                startRoasting();
+            }
+        });
+    </script>
+</body>
+</html>
